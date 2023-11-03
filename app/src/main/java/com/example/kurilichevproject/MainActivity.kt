@@ -3,12 +3,13 @@ package com.example.kurilichevproject
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -20,23 +21,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
-import com.example.kurilichevproject.ui.theme.KurilichevProjectTheme
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.kurilichevproject.nav.GeneralNav
+import com.example.kurilichevproject.ui.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            KurilichevProjectTheme {
+            AppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    StartWindow()
+                    GeneralNav()
                 }
             }
         }
@@ -44,33 +47,40 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun StartWindow() {
-    Box(modifier = Modifier
-        .fillMaxSize().padding(start = 100.dp)
+fun StartWindow(navController: NavHostController) {
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxSize()
     ) {
         Icon(
             imageVector = Icons.Filled.Star,
             contentDescription = "star",
             tint = MaterialTheme.colorScheme.primaryContainer,
             modifier = Modifier
-                .fillMaxWidth()
+                .size(this.maxHeight)
+                .align(Alignment.CenterEnd)
+                .offset(this.maxWidth / 2)
         )
     }
     Box(modifier = Modifier
         .fillMaxSize()
         .drawBehind {}) {
-        Column(modifier = Modifier.align(Alignment.CenterEnd)) {
+        Column(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(end = 40.dp)
+        ) {
             Text(
-                text = "Saint Landmark",
+                modifier = Modifier,
+                text = "Saint\nLandmark",
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.primary
             )
-            Button(
-                onClick = { /*Переход на OverView*/ },
-                modifier = Modifier
-                    .padding(15.dp)
-            ) {
 
+            Button(
+                onClick = { navController.navigate("OverView") },
+                modifier = Modifier.padding(top = 20.dp)
+            ) {
                 Text("Начать")
             }
         }
@@ -80,10 +90,9 @@ fun StartWindow() {
 @Preview(showBackground = true, wallpaper = Wallpapers.NONE)
 @Composable
 fun StartWindowPreview() {
-    KurilichevProjectTheme {
+    AppTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            StartWindow()
-
+            StartWindow(rememberNavController())
         }
     }
 }

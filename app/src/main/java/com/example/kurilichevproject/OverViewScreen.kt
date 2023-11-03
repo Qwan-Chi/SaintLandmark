@@ -1,13 +1,10 @@
 package com.example.kurilichevproject
 
-import android.icu.lang.UCharacter.VerticalOrientation
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -36,13 +33,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
-import com.example.kurilichevproject.ui.theme.KurilichevProjectTheme
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.kurilichevproject.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OverView() {
+fun OverView(navController: NavHostController) {
     Scaffold(topBar = {
-        // Вверхний бар
+        // Верхний бар
         TopAppBar(
             colors = topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -92,14 +91,15 @@ fun OverView() {
                     .padding(10.dp)
                     .fillMaxWidth()
             ) {
-                Row {
+                Row(Modifier.clickable { navController.navigate("InfoView") }) {
                     Image(
                         painter = painterResource(id = card.image),
                         contentDescription = "",
-                        Modifier.size(120.dp).clip(
-                            CircleShape)
+                        Modifier
+                            .size(120.dp)
+                            .clip(CircleShape)
                     )
-                    Column(modifier = Modifier.fillMaxSize()){
+                    Column(modifier = Modifier.fillMaxSize()) {
                         Text(text = card.title, style = MaterialTheme.typography.headlineSmall)
                         Text(text = card.address, style = MaterialTheme.typography.labelMedium)
                     }
@@ -127,9 +127,9 @@ val chips = listOf(
 @Preview(showBackground = true, wallpaper = Wallpapers.NONE)
 @Composable
 fun OverViewPreview() {
-    KurilichevProjectTheme {
+    AppTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            OverView()
+            OverView(rememberNavController())
         }
     }
 }

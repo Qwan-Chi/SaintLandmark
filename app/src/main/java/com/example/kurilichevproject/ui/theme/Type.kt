@@ -1,11 +1,9 @@
 package com.example.kurilichevproject.ui.theme
 
 import androidx.compose.material3.Typography
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.sp
 import com.example.kurilichevproject.R
@@ -15,8 +13,6 @@ val provider = GoogleFont.Provider(
     providerPackage = "com.google.android.gms",
     certificates = R.array.com_google_android_gms_fonts_certs
 )
-
-//val plexSherif = FontFamily(Font(GoogleFont("IBM Plex Serif"),fontProvider = provider))
 
 // Set of Material typography styles to start with
 val Typography = Typography(
@@ -29,10 +25,10 @@ val Typography = Typography(
     ),
     titleLarge = TextStyle(
         fontSize = 40.sp,
-        //fontFamily = plexSherif,
-
-        fontWeight = FontWeight(500)
-    )
+        fontFamily = FontFamily.Serif
+    ),
+    titleMedium = TextStyle(fontFamily = FontFamily.Serif),
+    titleSmall = TextStyle(fontFamily = FontFamily.Serif)
     /* Other default text styles to override
     titleLarge = TextStyle(
         fontFamily = FontFamily.Default,
