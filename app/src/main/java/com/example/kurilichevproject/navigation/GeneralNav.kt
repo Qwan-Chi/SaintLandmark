@@ -1,4 +1,4 @@
-package com.example.kurilichevproject.nav
+package com.example.kurilichevproject.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost

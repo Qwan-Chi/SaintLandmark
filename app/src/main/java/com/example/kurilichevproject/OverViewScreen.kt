@@ -109,21 +109,6 @@ fun OverView(navController: NavHostController) {
     }
 }
 
-data class CardDTO(val image: Int, val title: String, val address: String)
-
-val cards = listOf(
-    CardDTO(R.drawable.star, title = "Тест название", address = "Адрес"),
-    CardDTO(R.drawable.star, title = "Тест название", address = "Адрес")
-)
-
-data class ChipsDTO(val text: String)
-
-val chips = listOf(
-    ChipsDTO(text = "Тест"),
-    ChipsDTO(text = "Тест2"),
-    ChipsDTO(text = "Тест3")
-)
-
 @Preview(showBackground = true, wallpaper = Wallpapers.NONE)
 @Composable
 fun OverViewPreview() {

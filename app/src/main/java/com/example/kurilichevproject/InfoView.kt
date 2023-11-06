@@ -10,12 +10,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.twotone.Star
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,6 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kurilichevproject.ui.theme.AppTheme
@@ -95,7 +99,6 @@ fun InfoView(navController: NavHostController) {
                             .align(Alignment.Center)
                     )
                 }
-
             }
             Row {
                 var starStatus by remember { mutableStateOf(false) }
@@ -119,6 +122,16 @@ fun InfoView(navController: NavHostController) {
                     text = "Тестовый текст", style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
+            }
+
+            LazyRow(Modifier.fillMaxWidth()) {
+                items(chips) { chip ->
+                    AssistChip(
+                        onClick = {},
+                        label = { Text(text = chip.text) },
+                        Modifier.padding(start = 10.dp, top = 5.dp)
+                    )
+                }
             }
         }
     }

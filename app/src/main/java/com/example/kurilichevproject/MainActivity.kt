@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.kurilichevproject.nav.GeneralNav
+import com.example.kurilichevproject.navigation.GeneralNav
 import com.example.kurilichevproject.ui.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
