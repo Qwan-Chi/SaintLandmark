@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.ChipColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,11 +36,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kurilichevproject.ui.theme.AppTheme
@@ -49,32 +50,28 @@ import com.example.kurilichevproject.ui.theme.AppTheme
 fun InfoView(navController: NavHostController) {
     Scaffold(topBar = {
         // Вверхний бар
-        TopAppBar(
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary,
-            ),
-            title = {
-                Text(
-                    text =
-                    "Подробнее",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.primary
+        TopAppBar(colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+        ), title = {
+            Text(
+                text = "Подробнее",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }, navigationIcon = {
+            IconButton(onClick = { navController.navigate("OverView") }) {
+                Icon(
+                    imageVector = Icons.Filled.KeyboardArrowLeft,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(36.dp),
+                    contentDescription = "Localized description"
                 )
-            }, navigationIcon = {
-                IconButton(onClick = { navController.navigate("OverView") }) {
-                    Icon(
-                        imageVector = Icons.Filled.KeyboardArrowLeft,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(36.dp),
-                        contentDescription = "Localized description"
-                    )
-                }
-            })
+            }
+        })
     }) { innerPadding ->
         Column(
-            modifier = Modifier
-                .padding(innerPadding),
+            modifier = Modifier.padding(innerPadding),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
 
@@ -110,16 +107,16 @@ fun InfoView(navController: NavHostController) {
                             modifier = Modifier.size(36.dp),
                             contentDescription = "Localized description"
                         )
-                    } else
-                        Icon(
-                            imageVector = Icons.Filled.Star,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(36.dp),
-                            contentDescription = "Localized description"
-                        )
+                    } else Icon(
+                        imageVector = Icons.Filled.Star,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(36.dp),
+                        contentDescription = "Localized description"
+                    )
                 }
                 Text(
-                    text = "Тестовый текст", style = MaterialTheme.typography.headlineLarge,
+                    text = "Тестовый текст",
+                    style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -133,6 +130,8 @@ fun InfoView(navController: NavHostController) {
                     )
                 }
             }
+            Text(text = "Картельные сговоры не допускают ситуации, при которой сторонники тоталитаризма в науке ассоциативно распределены по отраслям.",
+                modifier = Modifier.padding(start = 10.dp, end = 10.dp))
         }
     }
 }

@@ -2,7 +2,7 @@ package com.example.kurilichevproject
 
 data class ChipsDTO(val text: String)
 val chips = listOf(
-    ChipsDTO(text = "Тест"),
-    ChipsDTO(text = "Тест2"),
-    ChipsDTO(text = "Тест3")
+    ChipsDTO(text = "Категория 1"),
+    ChipsDTO(text = "Категория 2"),
+    ChipsDTO(text = "категория 3")
 )
