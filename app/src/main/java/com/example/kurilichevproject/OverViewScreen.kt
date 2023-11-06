@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -80,7 +82,7 @@ fun OverView(navController: NavHostController, cards: List<CardDTO>) {
         ) {}
     }
     // Категории
-    LazyRow(Modifier.padding(top = 65.dp, start = 10.dp, end = 10.dp)) {
+    LazyRow(Modifier.padding(top = 65.dp, start = 10.dp, end = 10.dp).fillMaxWidth()) {
         items(cards) { chip ->
             for (category in chip.categories) {
                 AssistChip(
@@ -94,7 +96,7 @@ fun OverView(navController: NavHostController, cards: List<CardDTO>) {
     // Карточки
     LazyColumn(
         Modifier
-            .padding(top = 110.dp, start = 10.dp, end = 10.dp)
+            .padding(top = 130.dp, start = 10.dp, end = 10.dp)
     ) {
         items(cards) { card ->
             OutlinedCard(
