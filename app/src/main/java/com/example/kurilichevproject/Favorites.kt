@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,7 +44,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.kurilichevproject.ui.theme.AppTheme
 
 /**
- * Экран с обзором всех мест
+ * Экран с избранным
  * @param navController Контроллер навигации
  * @param cards Список карточек с данными
  * @see CardDTO
@@ -50,30 +52,28 @@ import com.example.kurilichevproject.ui.theme.AppTheme
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OverView(navController: NavHostController, cards: List<CardDTO>) {
+fun Favorites(navController: NavHostController, cards: List<CardDTO>) {
     Scaffold(topBar = {
         // Верхняя панель навигации
-        TopAppBar(
-            colors = topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                titleContentColor = MaterialTheme.colorScheme.primary,
-            ),
-            title = {
-                Text(
-                    "Обзор",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary
+        TopAppBar(colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = MaterialTheme.colorScheme.primary,
+        ), title = {
+            Text(
+                text = "Избранное",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }, navigationIcon = {
+            IconButton(onClick = { navController.navigate("OverView") }) {
+                Icon(
+                    imageVector = Icons.Filled.KeyboardArrowLeft,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(36.dp),
+                    contentDescription = "Backwards arrow icon"
                 )
-            }, actions = {
-                IconButton(onClick = {navController.navigate("Favorites")}) {
-                    Icon(
-                        imageVector = Icons.TwoTone.Star,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(36.dp),
-                        contentDescription = "Localized description"
-                    )
-                }
-            })
+            }
+        })
     }) { innerPadding ->
         Column(
             modifier = Modifier
@@ -81,22 +81,10 @@ fun OverView(navController: NavHostController, cards: List<CardDTO>) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {}
     }
-    // Категории
-    LazyRow(Modifier.padding(top = 65.dp, start = 10.dp, end = 10.dp).fillMaxWidth()) {
-        items(cards) { chip ->
-            for (category in chip.categories) {
-                AssistChip(
-                    onClick = {},
-                    label = { Text(text = category) },
-                    Modifier.padding(start = 10.dp, top = 5.dp)
-                )
-            }
-        }
-    }
     // Карточки
     LazyColumn(
         Modifier
-            .padding(top = 130.dp, start = 10.dp, end = 10.dp)
+            .padding(top = 70.dp, start = 10.dp, end = 10.dp)
     ) {
         items(cards) { card ->
             OutlinedCard(
@@ -129,10 +117,10 @@ fun OverView(navController: NavHostController, cards: List<CardDTO>) {
 
 @Preview(showBackground = true, wallpaper = Wallpapers.NONE)
 @Composable
-fun OverViewPreview() {
+fun FavoritesPreview() {
     AppTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-            OverView(
+            Favorites(
                 rememberNavController(),
                 listOf(
                     CardDTO(

@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.kurilichevproject.CardDTO
+import com.example.kurilichevproject.Favorites
 import com.example.kurilichevproject.InfoView
 import com.example.kurilichevproject.OverView
 import com.example.kurilichevproject.R
@@ -28,13 +29,13 @@ fun GeneralNav() {
             title = "Государственный Эрмитаж",
             address = "Дворцовая пл., д. 1",
             listOf("Категория 1", "Категория 2"),
-            "Эрмитаж это музей с интересной историей"
+            description = "Эрмитаж это музей с интересной историей"
         ), CardDTO(
             listOf(R.drawable.star, R.drawable.ic_launcher_background),
             title = "Петропавловская крепость",
             address = "Заячий остров, д. 3",
             listOf("Категория 3", "Категория 4"),
-            "Петропавловская крепость это не только музей, но и место, где можно погулять"
+            description = "Петропавловская крепость это не только музей, но и место, где можно погулять"
         )
     )
 
@@ -46,7 +47,11 @@ fun GeneralNav() {
         composable("OverView") {
             OverView(navController, main)
         }
+        composable("Favorites") {
+            Favorites(navController, main)
+        }
         composable("InfoView/{cardIndex}") {
+
             // Получение индекса карточки из аргументов
             val cardIndex = it.arguments?.getString("cardIndex")?.toInt() ?: 0
             InfoView(navController, main[cardIndex])

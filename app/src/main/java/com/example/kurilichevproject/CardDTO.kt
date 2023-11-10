@@ -1,5 +1,7 @@
 package com.example.kurilichevproject
 
+import androidx.annotation.DrawableRes
+
 /**
  * Класс доступа к карточкам достопримечательностей
  * @param gallery Список идентификаторов изображений, используемых в галерее. Первая картинка - превью на экране обзора

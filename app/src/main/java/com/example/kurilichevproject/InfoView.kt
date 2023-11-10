@@ -26,6 +26,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -155,7 +156,8 @@ fun InfoView(navController: NavHostController, card: CardDTO) {
                 LazyRow(
                     Modifier
                         .fillMaxWidth()
-                        .padding(top = 24.dp)) {
+                        .padding(top = 24.dp)
+                ) {
                     items(card.categories) { chip ->
                         AssistChip(
                             onClick = {},
@@ -179,6 +181,18 @@ fun InfoView(navController: NavHostController, card: CardDTO) {
                         modifier = Modifier.padding(start = 10.dp, end = 10.dp)
                     )
                 }
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                var text by remember { mutableStateOf("") }
+                OutlinedTextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    label = { Text("Комментарий") }
+                )
             }
         }
     }
