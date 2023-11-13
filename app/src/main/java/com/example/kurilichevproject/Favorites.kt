@@ -4,10 +4,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -18,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -43,13 +46,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kurilichevproject.ui.theme.AppTheme
 
-/**
- * Экран с избранным
- * @param navController Контроллер навигации
- * @param cards Список карточек с данными
- * @see CardDTO
- * @see InfoView
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Favorites(navController: NavHostController, cards: List<CardDTO>) {
@@ -128,14 +124,17 @@ fun FavoritesPreview() {
                         title = "Государственный Эрмитаж",
                         address = "Дворцовая пл., д. 1",
                         categories = listOf("Категория 1", "Категория 2"),
-                        description = "Эрмитаж это музей с интересной историей"
+                        shortDescription = "Эрмитаж это музей с интересной историей",
+                        detaileDescription = "Глубоко в дремучем лесу, среди древних деревьев, возвышается загадочный храм, словно затерянный во времени. Его каменные стены украшены высеченными рельефами, изображающими забытые боги и древние обряды. Внутри храма царит полумрак, прерываемый лишь лучами света, проникающими сквозь тонкие щели в стенах. Алтарь, увенчанный древними символами, являет собой фокусное внимание этого священного места. В воздухе витает таинственная энергия, будто сама суть духовного прошлого оживает в этом забытом храме."
                     ),
                     CardDTO(
                         gallery = listOf(R.drawable.ic_launcher_foreground),
                         title = "Петропавловская крепость",
                         address = "Заячий остров, д. 3",
                         categories = listOf("Категория 3", "Категория 4"),
-                        description = "Петропавловская крепость это не только музей, но и место, где можно погулять"
+                        shortDescription = "Петропавловская крепость это не только музей, но и место, где можно погулять",
+                        detaileDescription = "Глубоко в дремучем лесу, среди древних деревьев, возвышается загадочный храм, словно затерянный во времени. Его каменные стены украшены высеченными рельефами, изображающими забытые боги и древние обряды. Внутри храма царит полумрак, прерываемый лишь лучами света, проникающими сквозь тонкие щели в стенах. Алтарь, увенчанный древними символами, являет собой фокусное внимание этого священного места. В воздухе витает таинственная энергия, будто сама суть духовного прошлого оживает в этом забытом храме."
+
                     )
                 )
             )

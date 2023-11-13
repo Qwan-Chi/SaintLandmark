@@ -15,10 +15,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.AssistChip
@@ -49,13 +52,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kurilichevproject.ui.theme.AppTheme
 
-/**
- * Экран с подробной информацией о месте
- * @param navController Контроллер навигации
- * @param card Карточка с данными
- * @see CardDTO
- * @see OverView
- */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun InfoView(navController: NavHostController, card: CardDTO) {
@@ -81,8 +77,11 @@ fun InfoView(navController: NavHostController, card: CardDTO) {
             }
         })
     }) { innerPadding ->
+        val scrollState = rememberScrollState()
         Column(
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier
+                .padding(innerPadding)
+                .verticalScroll(state = scrollState),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
 
@@ -138,6 +137,7 @@ fun InfoView(navController: NavHostController, card: CardDTO) {
                             contentDescription = "Starred icon"
                         )
                     }
+
                     Text(
                         text = card.title,
                         style = MaterialTheme.typography.titleMedium,
@@ -147,7 +147,7 @@ fun InfoView(navController: NavHostController, card: CardDTO) {
                 }
 
                 Text(
-                    text = card.description,
+                    text = card.shortDescription,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 10.dp)
@@ -156,7 +156,7 @@ fun InfoView(navController: NavHostController, card: CardDTO) {
                 LazyRow(
                     Modifier
                         .fillMaxWidth()
-                        .padding(top = 24.dp)
+                        .padding(top = 10.dp)
                 ) {
                     items(card.categories) { chip ->
                         AssistChip(
@@ -181,22 +181,40 @@ fun InfoView(navController: NavHostController, card: CardDTO) {
                         modifier = Modifier.padding(start = 10.dp, end = 10.dp)
                     )
                 }
+                Text(
+                    text = "Подробное описание",
+                    modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                Text(
+                    text = card.detaileDescription
+                )
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally).
+                padding(bottom = 6.dp)
             ) {
                 var text by remember { mutableStateOf("") }
                 OutlinedTextField(
                     value = text,
                     onValueChange = { text = it },
-                    label = { Text("Комментарий") }
+                    label = { Text("Комментарий") },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Send,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(28.dp),
+                            contentDescription = "Unstarred icon"
+                        )
+                    }
                 )
             }
         }
     }
 }
+
 
 @Preview(showBackground = true, wallpaper = Wallpapers.NONE)
 @Composable
@@ -210,7 +228,8 @@ fun InfoViewPreview() {
                     "Государственный Эрмитаж",
                     "Дворцовая пл., д. 1",
                     listOf("Категория 1", "Категория 2"),
-                    "Интересное описание достопримечательности с множеством текста, которое не поместится на одной строке"
+                    "Интересное описание достопримечательности с множеством текста, которое не поместится на одной строке",
+                    "Высоко в небесах плывет остров облаков, словно кованый из пушистых масс. На его вершинах раскинуты замки из кристаллов, которые ловят лучи солнца и превращают их в мерцающий свет радуги. Вокруг острова вьются игривые облака в различных формах, будто живые существа, плетущие невидимые танцы в воздухе. Легкий ветерок приносит звуки нежной мелодии, создаваемой музыкальными инструментами, слепленными из самого воздуха. Это волшебное место, где сливаются фантазия и реальность, где каждый момент наполнен чудесами."
                 )
             )
         }
