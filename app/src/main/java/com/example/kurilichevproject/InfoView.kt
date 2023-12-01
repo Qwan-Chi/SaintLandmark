@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -54,7 +53,7 @@ import com.example.kurilichevproject.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun InfoView(navController: NavHostController, card: CardDTO) {
+fun InfoView(navController: NavHostController, card: Landmark) {
     Scaffold(topBar = {
         // Верхняя панель навигации
         TopAppBar(colors = TopAppBarDefaults.topAppBarColors(
@@ -90,7 +89,8 @@ fun InfoView(navController: NavHostController, card: CardDTO) {
                 Int.MAX_VALUE
             })
             HorizontalPager(state = pagerState, modifier = Modifier) { page ->
-                val normalIndex = page % card.gallery.size
+                val normalIndex = page % LandmarkImage.find { LandmarkImages.landmarkId eq card.id.value }
+                    .count().toInt()
 
                 Box(
                     modifier = Modifier
@@ -98,7 +98,7 @@ fun InfoView(navController: NavHostController, card: CardDTO) {
                         .padding(top = 24.dp)
                 ) {
                     Image(
-                        painter = painterResource(id = card.gallery[normalIndex]),
+                        painter = painterResource(id = LandmarkImage.findById(normalIndex)!!.image.toInt()),
                         contentDescription = "Gallery item",
                         modifier = Modifier
                             .size(250.dp)
@@ -158,13 +158,6 @@ fun InfoView(navController: NavHostController, card: CardDTO) {
                         .fillMaxWidth()
                         .padding(top = 10.dp)
                 ) {
-                    items(card.categories) { chip ->
-                        AssistChip(
-                            onClick = {},
-                            label = { Text(text = chip) },
-                            Modifier.padding(end = 10.dp, top = 5.dp)
-                        )
-                    }
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -223,14 +216,14 @@ fun InfoViewPreview() {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             InfoView(
                 rememberNavController(),
-                CardDTO(
-                    listOf(R.drawable.ic_launcher_background, R.drawable.ic_launcher_foreground),
-                    "Государственный Эрмитаж",
-                    "Дворцовая пл., д. 1",
-                    listOf("Категория 1", "Категория 2"),
-                    "Интересное описание достопримечательности с множеством текста, которое не поместится на одной строке",
-                    "Высоко в небесах плывет остров облаков, словно кованый из пушистых масс. На его вершинах раскинуты замки из кристаллов, которые ловят лучи солнца и превращают их в мерцающий свет радуги. Вокруг острова вьются игривые облака в различных формах, будто живые существа, плетущие невидимые танцы в воздухе. Легкий ветерок приносит звуки нежной мелодии, создаваемой музыкальными инструментами, слепленными из самого воздуха. Это волшебное место, где сливаются фантазия и реальность, где каждый момент наполнен чудесами."
-                )
+                Landmark.new {
+                    title = "Я КУРЮ ЖИРНЫЙ ЧЛЕН"
+                    address = "Дворцовая пл., д. 1"
+                    shortDescription = "Эрмитаж это музей с интересной историей"
+                    detaileDescription = "Высоко в небесах плывет остров облаков, словно кованый из пушистых масс. На его вершинах раскинуты замки из кристаллов, которые ловят лучи солнца и превращают их в мерцающий свет радуги. Вокруг острова вьются игривые облака в различных формах, будто живые существа, плетущие невидимые танцы в воздухе. Легкий ветерок приносит звуки нежной мелодии, создаваемой музыкальными инструментами, слепленными из самого воздуха. Это волшебное место, где сливаются фантазия и реальность, где каждый момент наполнен чудесами."
+                    isFavorite = false
+                    comment = ""
+                }
             )
         }
     }

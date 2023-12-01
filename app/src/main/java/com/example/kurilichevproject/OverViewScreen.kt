@@ -10,11 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Star
@@ -43,7 +40,7 @@ import com.example.kurilichevproject.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OverView(navController: NavHostController, cards: List<CardDTO>) {
+fun OverView(navController: NavHostController) {
     Scaffold(topBar = {
         // Верхняя панель навигации
         TopAppBar(
@@ -76,33 +73,25 @@ fun OverView(navController: NavHostController, cards: List<CardDTO>) {
     }
     // Категории
     LazyRow(Modifier.padding(top = 65.dp, start = 10.dp, end = 10.dp).fillMaxWidth()) {
-        items(cards) { chip ->
-            for (category in chip.categories) {
-                AssistChip(
-                    onClick = {},
-                    label = { Text(text = category) },
-                    Modifier.padding(start = 10.dp, top = 5.dp)
-                )
-            }
-        }
     }
     // Карточки
     LazyColumn(
         Modifier
             .padding(top = 130.dp, start = 10.dp, end = 10.dp)
     ) {
-        items(cards) { card ->
+        val landmarks = Landmark.all()
+        items(landmarks.count().toInt()) { card ->
             OutlinedCard(
                 modifier = Modifier
                     .padding(10.dp)
                     .fillMaxWidth()
             ) {
                 Row(
-                    Modifier.clickable { navController.navigate("InfoView/${cards.indexOf(card)}") },
+                    Modifier.clickable { navController.navigate("InfoView/${card}") },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = painterResource(id = card.gallery[0]),
+                        painter = painterResource(id =  LandmarkImage.find { LandmarkImages.landmarkId eq card }.toString().toInt()),
                         contentDescription = "Изображение-превью карточки",
                         Modifier
                             .size(100.dp)
@@ -111,8 +100,8 @@ fun OverView(navController: NavHostController, cards: List<CardDTO>) {
                             .background(MaterialTheme.colorScheme.primaryContainer)
                     )
                     Column(modifier = Modifier.fillMaxSize()) {
-                        Text(text = card.title, style = MaterialTheme.typography.headlineSmall)
-                        Text(text = card.address, style = MaterialTheme.typography.labelMedium)
+                        Text(text = Landmark.findById(card)!!.title, style = MaterialTheme.typography.headlineSmall)
+                        Text(text = Landmark.findById(card)!!.address, style = MaterialTheme.typography.labelMedium)
                     }
                 }
             }
@@ -126,25 +115,7 @@ fun OverViewPreview() {
     AppTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             OverView(
-                rememberNavController(),
-                listOf(
-                    CardDTO(
-                        gallery = listOf(R.drawable.ic_launcher_background),
-                        title = "Государственный Эрмитаж",
-                        address = "Дворцовая пл., д. 1",
-                        categories = listOf("Категория 1", "Категория 2"),
-                        shortDescription = "Эрмитаж это музей с интересной историей",
-                        detaileDescription = "Глубоко в дремучем лесу, среди древних деревьев, возвышается загадочный храм, словно затерянный во времени. Его каменные стены украшены высеченными рельефами, изображающими забытые боги и древние обряды. Внутри храма царит полумрак, прерываемый лишь лучами света, проникающими сквозь тонкие щели в стенах. Алтарь, увенчанный древними символами, являет собой фокусное внимание этого священного места. В воздухе витает таинственная энергия, будто сама суть духовного прошлого оживает в этом забытом храме."
-                    ),
-                    CardDTO(
-                        gallery = listOf(R.drawable.ic_launcher_foreground),
-                        title = "Петропавловская крепость",
-                        address = "Заячий остров, д. 3",
-                        categories = listOf("Категория 3", "Категория 4"),
-                        shortDescription = "Петропавловская крепость это не только музей, но и место, где можно погулять",
-                        detaileDescription = "Глубоко в дремучем лесу, среди древних деревьев, возвышается загадочный храм, словно затерянный во времени. Его каменные стены украшены высеченными рельефами, изображающими забытые боги и древние обряды. Внутри храма царит полумрак, прерываемый лишь лучами света, проникающими сквозь тонкие щели в стенах. Алтарь, увенчанный древними символами, являет собой фокусное внимание этого священного места. В воздухе витает таинственная энергия, будто сама суть духовного прошлого оживает в этом забытом храме."
-                    )
-                )
+                rememberNavController()
             )
         }
     }
