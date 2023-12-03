@@ -62,6 +62,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
 
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
+    implementation("com.h2database:h2:2.2.220")
 
     implementation("androidx.compose.ui:ui-text-google-fonts:1.5.4")
     implementation("androidx.navigation:navigation-compose:2.7.5")

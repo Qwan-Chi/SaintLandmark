@@ -7,41 +7,50 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.kurilichevproject.Favorites
 import com.example.kurilichevproject.InfoView
-import com.example.kurilichevproject.Landmark
-import com.example.kurilichevproject.LandmarkImage
 import com.example.kurilichevproject.OverView
 import com.example.kurilichevproject.StartWindow
+import com.example.kurilichevproject.db.Landmark
+import com.example.kurilichevproject.db.LandmarkImage
+import com.example.kurilichevproject.db.LandmarkImages
+import com.example.kurilichevproject.db.Landmarks
+import com.example.kurilichevproject.db.connectToDB
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
 fun GeneralNav() {
+    connectToDB()
     val navController = rememberNavController()
     LaunchedEffect(null) {
         transaction {
-            SchemaUtils.create(com.example.kurilichevproject.Landmarks)
+            SchemaUtils.create(Landmarks, LandmarkImages)
             Landmark.new {
-                title = "Я КУРЮ ЖИРНЫЙ ЧЛЕН"
+                title = "Эрмитаж"
                 address = "Дворцовая пл., д. 1"
                 shortDescription = "Эрмитаж это музей с интересной историей"
-                detaileDescription = "Высоко в небесах плывет остров облаков, словно кованый из пушистых масс. На его вершинах раскинуты замки из кристаллов, которые ловят лучи солнца и превращают их в мерцающий свет радуги. Вокруг острова вьются игривые облака в различных формах, будто живые существа, плетущие невидимые танцы в воздухе. Легкий ветерок приносит звуки нежной мелодии, создаваемой музыкальными инструментами, слепленными из самого воздуха. Это волшебное место, где сливаются фантазия и реальность, где каждый момент наполнен чудесами."
+                detaileDescription =
+                    "Высоко в небесах плывет остров облаков, словно кованый из пушистых масс. На его вершинах раскинуты замки из кристаллов, которые ловят лучи солнца и превращают их в мерцающий свет радуги. Вокруг острова вьются игривые облака в различных формах, будто живые существа, плетущие невидимые танцы в воздухе. Легкий ветерок приносит звуки нежной мелодии, создаваемой музыкальными инструментами, слепленными из самого воздуха. Это волшебное место, где сливаются фантазия и реальность, где каждый момент наполнен чудесами."
                 isFavorite = false
                 comment = ""
-            }
-            LandmarkImage.new {
-                landmarkId = Landmark.findById(0)!!.id
-                image = "R.drawable.star"
             }
             Landmark.new {
                 title = "Петропавловская крепость"
                 address = "Заячий остров, д. 3"
-                shortDescription = "Петропавловская крепость это не только музей, но и место, где можно погулять"
-                detaileDescription = "Глубоко в дремучем лесу, среди древних деревьев, возвышается загадочный храм, словно затерянный во времени. Его каменные стены украшены высеченными рельефами, изображающими забытые боги и древние обряды. Внутри храма царит полумрак, прерываемый лишь лучами света, проникающими сквозь тонкие щели в стенах. Алтарь, увенчанный древними символами, являет собой фокусное внимание этого священного места. В воздухе витает таинственная энергия, будто сама суть духовного прошлого оживает в этом забытом храме."
+                shortDescription =
+                    "Петропавловская крепость это не только музей, но и место, где можно погулять"
+                detaileDescription =
+                    "Глубоко в дремучем лесу, среди древних деревьев, возвышается загадочный храм, словно затерянный во времени. Его каменные стены украшены высеченными рельефами, изображающими забытые боги и древние обряды. Внутри храма царит полумрак, прерываемый лишь лучами света, проникающими сквозь тонкие щели в стенах. Алтарь, увенчанный древними символами, являет собой фокусное внимание этого священного места. В воздухе витает таинственная энергия, будто сама суть духовного прошлого оживает в этом забытом храме."
                 isFavorite = false
                 comment = ""
             }
+        }
+        transaction {
             LandmarkImage.new {
                 landmarkId = Landmark.findById(1)!!.id
+                image = "R.drawable.star"
+            }
+            LandmarkImage.new {
+                landmarkId = Landmark.findById(2)!!.id
                 image = "R.drawable.ic_launcher_background"
             }
         }
@@ -61,7 +70,7 @@ fun GeneralNav() {
         composable("InfoView/{cardIndex}") {
 
             // Получение индекса карточки из аргументов
-            val cardIndex = it.arguments?.getString("cardIndex")?.toInt() ?: 0
+            val cardIndex = it.arguments?.getString("cardIndex")?.toInt() ?: 1
             InfoView(navController, Landmark.findById(cardIndex)!!)
         }
     }

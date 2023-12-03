@@ -1,20 +1,18 @@
-package com.example.kurilichevproject
+package com.example.kurilichevproject.db
 
+import com.example.kurilichevproject.db.LandmarkImage.Companion.referrersOn
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
-import org.jetbrains.exposed.sql.transactions.transaction
 
 object Landmarks: IntIdTable() {
     val title = varchar("title", 255)
-    val address = varchar("address", 255)
-    val shortDescription = varchar("shortDescription", 255)
-    val detaileDescription = varchar("detaileDescription", 255)
+    val address = varchar("address", 1000)
+    val shortDescription = varchar("shortDescription", 1000)
+    val detaileDescription = varchar("detaileDescription", 1000)
     val isFavorite = bool("isFavorite")
-    val comment = varchar("comment", 255)
+    val comment = varchar("comment", 1000)
 }
 object LandmarkImages: IntIdTable() {
     val landmarkId = reference("landmarkId", Landmarks)
@@ -33,7 +31,7 @@ class Landmark(id: EntityID<Int>): IntEntity(id) {
 
 class LandmarkImage(id: EntityID<Int>): IntEntity(id) {
     companion object: IntEntityClass<LandmarkImage>(LandmarkImages)
-    var landmarkId by LandmarkImages.landmarkId
+    var landmarkId by Landmarks referencedOn
     var image by LandmarkImages.image
 }
 

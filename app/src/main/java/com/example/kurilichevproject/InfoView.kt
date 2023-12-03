@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.twotone.Star
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,7 +48,12 @@ import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.kurilichevproject.db.Landmark
+import com.example.kurilichevproject.db.LandmarkImage
+import com.example.kurilichevproject.db.LandmarkImages
+import com.example.kurilichevproject.db.connectToDB
 import com.example.kurilichevproject.ui.theme.AppTheme
+import org.jetbrains.exposed.sql.transactions.transaction
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -76,6 +80,7 @@ fun InfoView(navController: NavHostController, card: Landmark) {
             }
         })
     }) { innerPadding ->
+        connectToDB()
         val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
@@ -89,8 +94,8 @@ fun InfoView(navController: NavHostController, card: Landmark) {
                 Int.MAX_VALUE
             })
             HorizontalPager(state = pagerState, modifier = Modifier) { page ->
-                val normalIndex = page % LandmarkImage.find { LandmarkImages.landmarkId eq card.id.value }
-                    .count().toInt()
+                val normalIndex = page % transaction { LandmarkImage.find { LandmarkImages.landmarkId eq card.id.value }
+                    .count().toInt() }
 
                 Box(
                     modifier = Modifier
@@ -98,7 +103,7 @@ fun InfoView(navController: NavHostController, card: Landmark) {
                         .padding(top = 24.dp)
                 ) {
                     Image(
-                        painter = painterResource(id = LandmarkImage.findById(normalIndex)!!.image.toInt()),
+                        painter = painterResource(id = transaction { LandmarkImage.findById(normalIndex)!!.image.toInt() }),
                         contentDescription = "Gallery item",
                         modifier = Modifier
                             .size(250.dp)
@@ -217,7 +222,7 @@ fun InfoViewPreview() {
             InfoView(
                 rememberNavController(),
                 Landmark.new {
-                    title = "Я КУРЮ ЖИРНЫЙ ЧЛЕН"
+                    title = "Эрмитаж"
                     address = "Дворцовая пл., д. 1"
                     shortDescription = "Эрмитаж это музей с интересной историей"
                     detaileDescription = "Высоко в небесах плывет остров облаков, словно кованый из пушистых масс. На его вершинах раскинуты замки из кристаллов, которые ловят лучи солнца и превращают их в мерцающий свет радуги. Вокруг острова вьются игривые облака в различных формах, будто живые существа, плетущие невидимые танцы в воздухе. Легкий ветерок приносит звуки нежной мелодии, создаваемой музыкальными инструментами, слепленными из самого воздуха. Это волшебное место, где сливаются фантазия и реальность, где каждый момент наполнен чудесами."

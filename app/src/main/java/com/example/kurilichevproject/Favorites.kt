@@ -34,6 +34,10 @@ import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.kurilichevproject.db.Landmark
+import com.example.kurilichevproject.db.LandmarkImage
+import com.example.kurilichevproject.db.LandmarkImages
+import com.example.kurilichevproject.db.connectToDB
 import com.example.kurilichevproject.ui.theme.AppTheme
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -69,13 +73,14 @@ fun Favorites(navController: NavHostController) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {}
     }
+    connectToDB()
     // Карточки
     LazyColumn(
         Modifier
             .padding(top = 70.dp, start = 10.dp, end = 10.dp)
     ) {
-        val landmarks = transaction { Landmark.all() }
-        items(landmarks.count().toInt()) { card ->
+        val landmarks = transaction { Landmark.all().count().toInt() }
+        items(landmarks) { card ->
             OutlinedCard(
                 modifier = Modifier
                     .padding(10.dp)
@@ -86,7 +91,7 @@ fun Favorites(navController: NavHostController) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = painterResource(id = LandmarkImage.find(LandmarkImages.landmarkId eq card).first().id.value),
+                        painter = painterResource(id = transaction { LandmarkImage.find(LandmarkImages.landmarkId eq card).first().id.value }),
                         contentDescription = "Изображение-превью карточки",
                         Modifier
                             .size(100.dp)
@@ -95,8 +100,8 @@ fun Favorites(navController: NavHostController) {
                             .background(MaterialTheme.colorScheme.primaryContainer)
                     )
                     Column(modifier = Modifier.fillMaxSize()) {
-                        Text(text = Landmark.findById(card)!!.title, style = MaterialTheme.typography.headlineSmall)
-                        Text(text = Landmark.findById(card)!!.address, style = MaterialTheme.typography.labelMedium)
+                        Text(text = transaction { Landmark.findById(card)!!.title }, style = MaterialTheme.typography.headlineSmall)
+                        Text(text = transaction { Landmark.findById(card)!!.address }, style = MaterialTheme.typography.labelMedium)
                     }
                 }
             }
