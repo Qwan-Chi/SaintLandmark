@@ -45,12 +45,13 @@ fun GeneralNav() {
             }
         }
         transaction {
+            println(Landmark.findById(2))
             LandmarkImage.new {
-                landmarkId = Landmark.findById(1)!!.id
+                landmarkId = Landmark.findById(1)!!
                 image = "R.drawable.star"
             }
             LandmarkImage.new {
-                landmarkId = Landmark.findById(2)!!.id
+                landmarkId = Landmark.findById(2)!!
                 image = "R.drawable.ic_launcher_background"
             }
         }

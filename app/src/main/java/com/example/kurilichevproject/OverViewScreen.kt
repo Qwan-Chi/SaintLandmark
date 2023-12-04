@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Star
@@ -36,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.kurilichevproject.db.Landmark
-import com.example.kurilichevproject.db.LandmarkImage
 import com.example.kurilichevproject.db.LandmarkImages
 import com.example.kurilichevproject.db.connectToDB
 import com.example.kurilichevproject.ui.theme.AppTheme
@@ -93,7 +91,7 @@ fun OverView(navController: NavHostController) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = painterResource(id = transaction { Landmark.find { LandmarkImages.landmarkId eq card }.toString().toInt() }),
+                        painter = painterResource(id = transaction { Landmark.find { LandmarkImages.landmark eq card }.toString().toInt() }),
                         contentDescription = "Изображение-превью карточки",
                         Modifier
                             .size(100.dp)

@@ -94,7 +94,7 @@ fun InfoView(navController: NavHostController, card: Landmark) {
                 Int.MAX_VALUE
             })
             HorizontalPager(state = pagerState, modifier = Modifier) { page ->
-                val normalIndex = page % transaction { LandmarkImage.find { LandmarkImages.landmarkId eq card.id.value }
+                val normalIndex = page % transaction { LandmarkImage.find { LandmarkImages.landmark eq card.id.value }
                     .count().toInt() }
 
                 Box(

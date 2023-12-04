@@ -1,6 +1,5 @@
 package com.example.kurilichevproject.db
 
-import com.example.kurilichevproject.db.LandmarkImage.Companion.referrersOn
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -15,7 +14,7 @@ object Landmarks: IntIdTable() {
     val comment = varchar("comment", 1000)
 }
 object LandmarkImages: IntIdTable() {
-    val landmarkId = reference("landmarkId", Landmarks)
+    val landmark = reference("landmark", Landmarks)
     val image = varchar("image", 255)
 }
 
@@ -31,7 +30,7 @@ class Landmark(id: EntityID<Int>): IntEntity(id) {
 
 class LandmarkImage(id: EntityID<Int>): IntEntity(id) {
     companion object: IntEntityClass<LandmarkImage>(LandmarkImages)
-    var landmarkId by Landmarks referencedOn
+    var landmarkId by Landmark referencedOn LandmarkImages.landmark
     var image by LandmarkImages.image
 }
 

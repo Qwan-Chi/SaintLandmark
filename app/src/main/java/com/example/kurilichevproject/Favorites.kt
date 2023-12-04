@@ -91,7 +91,7 @@ fun Favorites(navController: NavHostController) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = painterResource(id = transaction { LandmarkImage.find(LandmarkImages.landmarkId eq card).first().id.value }),
+                        painter = painterResource(id = transaction { LandmarkImage.find(LandmarkImages.landmark eq card).first().id.value }),
                         contentDescription = "Изображение-превью карточки",
                         Modifier
                             .size(100.dp)
