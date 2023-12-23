@@ -45,7 +45,7 @@ fun GeneralNav() {
             }
         }
         transaction {
-            println(Landmark.findById(2))
+
             LandmarkImage.new {
                 landmarkId = Landmark.findById(1)!!
                 image = "R.drawable.star"

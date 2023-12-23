@@ -4,6 +4,7 @@ import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
+import org.jetbrains.exposed.sql.kotlin.datetime.date
 
 object Landmarks: IntIdTable() {
     val title = varchar("title", 255)
@@ -27,6 +28,8 @@ class Landmark(id: EntityID<Int>): IntEntity(id) {
     var isFavorite by Landmarks.isFavorite
     var comment by Landmarks.comment
 }
+
+// Landmark.all()
 
 class LandmarkImage(id: EntityID<Int>): IntEntity(id) {
     companion object: IntEntityClass<LandmarkImage>(LandmarkImages)

@@ -43,6 +43,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OverView(navController: NavHostController) {
+    connectToDB()
     Scaffold(topBar = {
         // Верхняя панель навигации
         TopAppBar(
@@ -57,7 +58,7 @@ fun OverView(navController: NavHostController) {
                     color = MaterialTheme.colorScheme.primary
                 )
             }, actions = {
-                IconButton(onClick = {navController.navigate("Favorites")}) {
+                IconButton(onClick = { navController.navigate("Favorites") }) {
                     Icon(
                         imageVector = Icons.TwoTone.Star,
                         tint = MaterialTheme.colorScheme.primary,
@@ -91,7 +92,9 @@ fun OverView(navController: NavHostController) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = painterResource(id = transaction { Landmark.find { LandmarkImages.landmark eq card }.toString().toInt() }),
+                        painterResource(id = transaction {
+                            Landmark.find { LandmarkImages.landmark eq card }.singleOrNull()?.id?.value?.toString()?.toInt() ?: 0
+                        }),
                         contentDescription = "Изображение-превью карточки",
                         Modifier
                             .size(100.dp)
@@ -100,8 +103,14 @@ fun OverView(navController: NavHostController) {
                             .background(MaterialTheme.colorScheme.primaryContainer)
                     )
                     Column(modifier = Modifier.fillMaxSize()) {
-                        Text(text = transaction {  Landmark.findById(card)!!.title }, style = MaterialTheme.typography.headlineSmall)
-                        Text(text = transaction {  Landmark.findById(card)!!.address }, style = MaterialTheme.typography.labelMedium)
+                        Text(
+                            text = transaction { Landmark.findById(card)!!.title },
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                        Text(
+                            text = transaction { Landmark.findById(card)!!.address },
+                            style = MaterialTheme.typography.labelMedium
+                        )
                     }
                 }
             }
