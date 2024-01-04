@@ -45,14 +45,13 @@ fun GeneralNav() {
             }
         }
         transaction {
-
             LandmarkImage.new {
                 landmarkId = Landmark.findById(1)!!
-                image = "R.drawable.star"
+                image = "https://storage.theoryandpractice.ru/tnp/uploads/image_block/000/052/014/image/base_d9dd9b626f.jpg"
             }
             LandmarkImage.new {
                 landmarkId = Landmark.findById(2)!!
-                image = "R.drawable.ic_launcher_background"
+                image = "https://storage.theoryandpractice.ru/tnp/uploads/image_block/000/052/014/image/base_d9dd9b626f.jpg"
             }
         }
     }

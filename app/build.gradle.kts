@@ -50,7 +50,7 @@ android {
 }
 
 dependencies {
-    val exposedVersion = "0.44.1"
+    val exposedVersion = "0.45.0"
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
@@ -63,6 +63,8 @@ dependencies {
 
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
     implementation("com.h2database:h2:2.1.210")
+
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
     implementation("androidx.compose.ui:ui-text-google-fonts:1.5.4")
     implementation("androidx.navigation:navigation-compose:2.7.5")

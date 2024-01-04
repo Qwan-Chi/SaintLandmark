@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,10 +35,14 @@ import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.kurilichevproject.db.Landmark
+import com.example.kurilichevproject.db.LandmarkImage
 import com.example.kurilichevproject.db.LandmarkImages
 import com.example.kurilichevproject.db.connectToDB
 import com.example.kurilichevproject.ui.theme.AppTheme
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -81,20 +86,22 @@ fun OverView(navController: NavHostController) {
     ) {
         connectToDB()
         val landmarks = transaction { Landmark.all().count().toInt() }
-        items(landmarks) { card ->
+        items(landmarks) { landmarkId ->
+            val landmark = transaction { Landmark.findById(landmarkId+1) }?:return@items
+            LaunchedEffect(null){
+                transaction { println(LandmarkImage.find {LandmarkImages.landmark eq landmark.id}.first().image) }
+            }
             OutlinedCard(
                 modifier = Modifier
                     .padding(10.dp)
                     .fillMaxWidth()
             ) {
                 Row(
-                    Modifier.clickable { navController.navigate("InfoView/${card}") },
+                    Modifier.clickable { navController.navigate("InfoView/${landmarkId}") },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painterResource(id = transaction {
-                            Landmark.find { LandmarkImages.landmark eq card }.singleOrNull()?.id?.value?.toString()?.toInt() ?: 0
-                        }),
+                    AsyncImage(model = transaction { LandmarkImage.find {LandmarkImages.landmark eq landmark.id}.first().image }
+                        ,
                         contentDescription = "Изображение-превью карточки",
                         Modifier
                             .size(100.dp)
@@ -104,11 +111,11 @@ fun OverView(navController: NavHostController) {
                     )
                     Column(modifier = Modifier.fillMaxSize()) {
                         Text(
-                            text = transaction { Landmark.findById(card)!!.title },
+                            text = landmark.title,
                             style = MaterialTheme.typography.headlineSmall
                         )
                         Text(
-                            text = transaction { Landmark.findById(card)!!.address },
+                            text = landmark.address,
                             style = MaterialTheme.typography.labelMedium
                         )
                     }
