@@ -11,7 +11,7 @@ object Landmarks: IntIdTable() {
     val title = varchar("title", 255)
     val address = varchar("address", 255)
     val shortDescription = varchar("shortDescription", 100)
-    val detaileDescription = text("detaileDescription")
+    val detaileDescription = varchar("detaileDescription", 1000)
     val isFavorite = bool("isFavorite")
     val comment = text("comment")
 }

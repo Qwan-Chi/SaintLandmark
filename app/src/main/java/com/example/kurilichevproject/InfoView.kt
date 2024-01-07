@@ -1,7 +1,6 @@
 package com.example.kurilichevproject
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,13 +41,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.kurilichevproject.db.Landmark
 import com.example.kurilichevproject.db.LandmarkImage
 import com.example.kurilichevproject.db.LandmarkImages
@@ -80,7 +80,8 @@ fun InfoView(navController: NavHostController, card: Landmark) {
             }
         })
     }) { innerPadding ->
-        connectToDB()
+
+        //LaunchedEffect( null ) {connectToDB()}
         val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
@@ -89,21 +90,21 @@ fun InfoView(navController: NavHostController, card: Landmark) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
 
-
-            val pagerState = rememberPagerState(pageCount = {
-                Int.MAX_VALUE
-            })
+            val pagerState = rememberPagerState(pageCount = { Int.MAX_VALUE })
             HorizontalPager(state = pagerState, modifier = Modifier) { page ->
-                val normalIndex = page % transaction { LandmarkImage.find { LandmarkImages.landmark eq card.id.value }
-                    .count().toInt() }
+                val normalIndex = remember {
+                    page % transaction {
+                        LandmarkImage.find { LandmarkImages.landmark eq card.id.value }.count().toInt()
+                    }
+                }
 
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 24.dp)
                 ) {
-                    Image(
-                        painter = painterResource(id = transaction { LandmarkImage.findById(normalIndex)!!.image.toInt() }),
+                    AsyncImage(
+                        model = transaction { LandmarkImage.findById(normalIndex + 1)?.image },
                         contentDescription = "Gallery item",
                         modifier = Modifier
                             .size(250.dp)
@@ -162,8 +163,7 @@ fun InfoView(navController: NavHostController, card: Landmark) {
                     Modifier
                         .fillMaxWidth()
                         .padding(top = 10.dp)
-                ) {
-                }
+                ) {}
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(top = 16.dp)
@@ -184,15 +184,16 @@ fun InfoView(navController: NavHostController, card: Landmark) {
                     modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
                     style = MaterialTheme.typography.headlineSmall
                 )
-                Text(
-                    text = card.detaileDescription
-                )
+//                Text(
+//                    text = card.detaileDescription
+//                )
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
-                modifier = Modifier.align(Alignment.CenterHorizontally).
-                padding(bottom = 6.dp)
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 6.dp)
             ) {
                 var text by remember { mutableStateOf("") }
                 OutlinedTextField(
@@ -225,7 +226,8 @@ fun InfoViewPreview() {
                     title = "Эрмитаж"
                     address = "Дворцовая пл., д. 1"
                     shortDescription = "Эрмитаж это музей с интересной историей"
-                    detaileDescription = "Высоко в небесах плывет остров облаков, словно кованый из пушистых масс. На его вершинах раскинуты замки из кристаллов, которые ловят лучи солнца и превращают их в мерцающий свет радуги. Вокруг острова вьются игривые облака в различных формах, будто живые существа, плетущие невидимые танцы в воздухе. Легкий ветерок приносит звуки нежной мелодии, создаваемой музыкальными инструментами, слепленными из самого воздуха. Это волшебное место, где сливаются фантазия и реальность, где каждый момент наполнен чудесами."
+                    detaileDescription =
+                        "Высоко в небесах плывет остров облаков, словно кованый из пушистых масс. На его вершинах раскинуты замки из кристаллов, которые ловят лучи солнца и превращают их в мерцающий свет радуги. Вокруг острова вьются игривые облака в различных формах, будто живые существа, плетущие невидимые танцы в воздухе. Легкий ветерок приносит звуки нежной мелодии, создаваемой музыкальными инструментами, слепленными из самого воздуха. Это волшебное место, где сливаются фантазия и реальность, где каждый момент наполнен чудесами."
                     isFavorite = false
                     comment = ""
                 }

@@ -48,7 +48,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OverView(navController: NavHostController) {
-    connectToDB()
+    //connectToDB()
     Scaffold(topBar = {
         // Верхняя панель навигации
         TopAppBar(
@@ -84,7 +84,7 @@ fun OverView(navController: NavHostController) {
         Modifier
             .padding(top = 130.dp, start = 10.dp, end = 10.dp)
     ) {
-        connectToDB()
+        //connectToDB()
         val landmarks = transaction { Landmark.all().count().toInt() }
         items(landmarks) { landmarkId ->
             val landmark = transaction { Landmark.findById(landmarkId+1) }?:return@items
@@ -97,7 +97,7 @@ fun OverView(navController: NavHostController) {
                     .fillMaxWidth()
             ) {
                 Row(
-                    Modifier.clickable { navController.navigate("InfoView/${landmarkId}") },
+                    Modifier.clickable { navController.navigate("InfoView/${landmarkId+1}") },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     AsyncImage(model = transaction { LandmarkImage.find {LandmarkImages.landmark eq landmark.id}.first().image }

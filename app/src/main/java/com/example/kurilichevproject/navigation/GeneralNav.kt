@@ -19,10 +19,11 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
 fun GeneralNav() {
-    connectToDB()
+    LaunchedEffect( null ) {connectToDB()}
     val navController = rememberNavController()
     LaunchedEffect(null) {
         transaction {
+            if (SchemaUtils.listTables().size > 15)return@transaction
             SchemaUtils.create(Landmarks, LandmarkImages)
             Landmark.new {
                 title = "Эрмитаж"
@@ -71,7 +72,7 @@ fun GeneralNav() {
 
             // Получение индекса карточки из аргументов
             val cardIndex = it.arguments?.getString("cardIndex")?.toInt() ?: 1
-            InfoView(navController, Landmark.findById(cardIndex)!!)
+            InfoView(navController, transaction {Landmark.findById(cardIndex)!!})
         }
     }
 }
