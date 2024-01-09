@@ -19,12 +19,14 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 @Composable
 fun GeneralNav() {
-    LaunchedEffect( null ) {connectToDB()}
     val navController = rememberNavController()
     LaunchedEffect(null) {
+        connectToDB()
+        val tablesLength = transaction { SchemaUtils.listTables().size }
+        if (tablesLength > 15) return@LaunchedEffect
         transaction {
-            if (SchemaUtils.listTables().size > 15)return@transaction
             SchemaUtils.create(Landmarks, LandmarkImages)
+
             Landmark.new {
                 title = "Эрмитаж"
                 address = "Дворцовая пл., д. 1"
@@ -45,13 +47,14 @@ fun GeneralNav() {
                 comment = ""
             }
         }
+
         transaction {
             LandmarkImage.new {
-                landmarkId = Landmark.findById(1)!!
+                landmark = Landmark.findById(1)!!
                 image = "https://storage.theoryandpractice.ru/tnp/uploads/image_block/000/052/014/image/base_d9dd9b626f.jpg"
             }
             LandmarkImage.new {
-                landmarkId = Landmark.findById(2)!!
+                landmark = Landmark.findById(2)!!
                 image = "https://storage.theoryandpractice.ru/tnp/uploads/image_block/000/052/014/image/base_d9dd9b626f.jpg"
             }
         }

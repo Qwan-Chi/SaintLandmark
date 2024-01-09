@@ -49,11 +49,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.kurilichevproject.db.Landmark
-import com.example.kurilichevproject.db.LandmarkImage
-import com.example.kurilichevproject.db.LandmarkImages
-import com.example.kurilichevproject.db.connectToDB
+import com.example.kurilichevproject.db.Landmarks
 import com.example.kurilichevproject.ui.theme.AppTheme
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -94,8 +96,11 @@ fun InfoView(navController: NavHostController, card: Landmark) {
             HorizontalPager(state = pagerState, modifier = Modifier) { page ->
                 val normalIndex = remember {
                     page % transaction {
-                        LandmarkImage.find { LandmarkImages.landmark eq card.id.value }.count().toInt()
+                        card.images.count().toInt()
                     }
+                }
+                val imageUrl = remember {
+                    transaction { card.images.toList()[normalIndex].image }
                 }
 
                 Box(
@@ -104,7 +109,7 @@ fun InfoView(navController: NavHostController, card: Landmark) {
                         .padding(top = 24.dp)
                 ) {
                     AsyncImage(
-                        model = transaction { LandmarkImage.findById(normalIndex + 1)?.image },
+                        model = imageUrl,
                         contentDescription = "Gallery item",
                         modifier = Modifier
                             .size(250.dp)
@@ -128,8 +133,11 @@ fun InfoView(navController: NavHostController, card: Landmark) {
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 ) {
                     var starStatus by remember { mutableStateOf(false) }
-                    IconButton(onClick = { starStatus = !starStatus }) {
-                        if (!starStatus) {
+                    IconButton(onClick = {
+                        transaction { card.isFavorite = !card.isFavorite }
+                        starStatus = !starStatus
+                    }) {
+                        if (!card.isFavorite) {
                             Icon(
                                 imageVector = Icons.TwoTone.Star,
                                 tint = MaterialTheme.colorScheme.primary,
@@ -184,9 +192,9 @@ fun InfoView(navController: NavHostController, card: Landmark) {
                     modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
                     style = MaterialTheme.typography.headlineSmall
                 )
-//                Text(
-//                    text = card.detaileDescription
-//                )
+                Text(
+                    text = card.detaileDescription
+                )
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -196,17 +204,33 @@ fun InfoView(navController: NavHostController, card: Landmark) {
                     .padding(bottom = 6.dp)
             ) {
                 var text by remember { mutableStateOf("") }
+                LaunchedEffect(null) {
+                    transaction {
+                        text = Landmarks.select { Landmarks.id eq card.id }.single()[Landmarks.comment]
+                    }
+
+                }
                 OutlinedTextField(
                     value = text,
                     onValueChange = { text = it },
                     label = { Text("Комментарий") },
                     trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Send,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(28.dp),
-                            contentDescription = "Unstarred icon"
-                        )
+                        IconButton(onClick = {
+                            transaction {
+                                // логер
+                                addLogger(StdOutSqlLogger)
+                                Landmarks.update({ Landmarks.id eq card.id }) {
+                                    it[comment] = text
+                                }
+                            }
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.Send,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(28.dp),
+                                contentDescription = "Unstarred icon"
+                            )
+                        }
                     }
                 )
             }
@@ -222,15 +246,7 @@ fun InfoViewPreview() {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             InfoView(
                 rememberNavController(),
-                Landmark.new {
-                    title = "Эрмитаж"
-                    address = "Дворцовая пл., д. 1"
-                    shortDescription = "Эрмитаж это музей с интересной историей"
-                    detaileDescription =
-                        "Высоко в небесах плывет остров облаков, словно кованый из пушистых масс. На его вершинах раскинуты замки из кристаллов, которые ловят лучи солнца и превращают их в мерцающий свет радуги. Вокруг острова вьются игривые облака в различных формах, будто живые существа, плетущие невидимые танцы в воздухе. Легкий ветерок приносит звуки нежной мелодии, создаваемой музыкальными инструментами, слепленными из самого воздуха. Это волшебное место, где сливаются фантазия и реальность, где каждый момент наполнен чудесами."
-                    isFavorite = false
-                    comment = ""
-                }
+                Landmark.findById(1)!!
             )
         }
     }

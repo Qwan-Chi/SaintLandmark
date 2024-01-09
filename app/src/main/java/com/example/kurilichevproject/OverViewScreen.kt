@@ -1,6 +1,5 @@
 package com.example.kurilichevproject
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,10 +25,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
@@ -38,11 +37,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.kurilichevproject.db.Landmark
 import com.example.kurilichevproject.db.LandmarkImage
-import com.example.kurilichevproject.db.LandmarkImages
-import com.example.kurilichevproject.db.connectToDB
 import com.example.kurilichevproject.ui.theme.AppTheme
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,16 +75,18 @@ fun OverView(navController: NavHostController) {
         ) {}
     }
     // Карточки
+    val landmarks = remember { transaction { Landmark.all().toList() } }
     LazyColumn(
         Modifier
             .padding(top = 130.dp, start = 10.dp, end = 10.dp)
     ) {
         //connectToDB()
-        val landmarks = transaction { Landmark.all().count().toInt() }
-        items(landmarks) { landmarkId ->
-            val landmark = transaction { Landmark.findById(landmarkId+1) }?:return@items
-            LaunchedEffect(null){
-                transaction { println(LandmarkImage.find {LandmarkImages.landmark eq landmark.id}.first().image) }
+        items(landmarks.size) { landmarkId ->
+            val landmark = landmarks[landmarkId]
+            val image = remember {
+                transaction {
+                    landmark.images.toList().first().image
+                }
             }
             OutlinedCard(
                 modifier = Modifier
@@ -97,11 +94,11 @@ fun OverView(navController: NavHostController) {
                     .fillMaxWidth()
             ) {
                 Row(
-                    Modifier.clickable { navController.navigate("InfoView/${landmarkId+1}") },
+                    Modifier.clickable { navController.navigate("InfoView/${landmarkId + 1}") },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    AsyncImage(model = transaction { LandmarkImage.find {LandmarkImages.landmark eq landmark.id}.first().image }
-                        ,
+                    AsyncImage(
+                        model = image,
                         contentDescription = "Изображение-превью карточки",
                         Modifier
                             .size(100.dp)

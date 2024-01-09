@@ -34,9 +34,11 @@ import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.kurilichevproject.db.Landmark
 import com.example.kurilichevproject.db.LandmarkImage
 import com.example.kurilichevproject.db.LandmarkImages
+import com.example.kurilichevproject.db.Landmarks
 import com.example.kurilichevproject.db.connectToDB
 import com.example.kurilichevproject.ui.theme.AppTheme
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -73,25 +75,23 @@ fun Favorites(navController: NavHostController) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {}
     }
-    connectToDB()
+    //connectToDB()
     // Карточки
     LazyColumn(
         Modifier
             .padding(top = 70.dp, start = 10.dp, end = 10.dp)
     ) {
-        val landmarks = transaction { Landmark.all().count().toInt() }
-        items(landmarks) { card ->
+        val landmarks = transaction { Landmark.find{ Landmarks.isFavorite eq true} }.toList()
+        items(landmarks.size) { card ->
             OutlinedCard(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth()
+                modifier = Modifier.padding(10.dp).fillMaxWidth()
             ) {
                 Row(
                     Modifier.clickable { navController.navigate("InfoView/${card}") },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painter = painterResource(id = transaction { LandmarkImage.find(LandmarkImages.landmark eq card).first().id.value }),
+                    AsyncImage(
+                        model = transaction { LandmarkImage.find(LandmarkImages.landmark eq card).first().id.value },
                         contentDescription = "Изображение-превью карточки",
                         Modifier
                             .size(100.dp)
