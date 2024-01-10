@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Star
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,12 +30,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
 import com.example.kurilichevproject.db.Landmark
 import com.example.kurilichevproject.db.LandmarkImage
 import com.example.kurilichevproject.ui.theme.AppTheme
@@ -78,14 +83,14 @@ fun OverView(navController: NavHostController) {
     val landmarks = remember { transaction { Landmark.all().toList() } }
     LazyColumn(
         Modifier
-            .padding(top = 130.dp, start = 10.dp, end = 10.dp)
+            .padding(top = 70.dp, start = 10.dp, end = 10.dp)
     ) {
         //connectToDB()
         items(landmarks.size) { landmarkId ->
             val landmark = landmarks[landmarkId]
             val image = remember {
                 transaction {
-                    landmark.images.toList().first().image
+                    landmark.images.first().image
                 }
             }
             OutlinedCard(
@@ -97,14 +102,20 @@ fun OverView(navController: NavHostController) {
                     Modifier.clickable { navController.navigate("InfoView/${landmarkId + 1}") },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    AsyncImage(
+                    LaunchedEffect(null){
+                        println(image)
+                    }
+                    SubcomposeAsyncImage(
                         model = image,
+                        loading = {
+                            CircularProgressIndicator()
+                        },
                         contentDescription = "Изображение-превью карточки",
-                        Modifier
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.clip(RoundedCornerShape(10.dp))
                             .size(100.dp)
                             .padding(10.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            //.background(MaterialTheme.colorScheme.primaryContainer)
                     )
                     Column(modifier = Modifier.fillMaxSize()) {
                         Text(

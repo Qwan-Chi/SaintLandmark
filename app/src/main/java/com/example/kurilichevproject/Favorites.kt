@@ -1,6 +1,5 @@
 package com.example.kurilichevproject
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,21 +25,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
 import com.example.kurilichevproject.db.Landmark
-import com.example.kurilichevproject.db.LandmarkImage
-import com.example.kurilichevproject.db.LandmarkImages
 import com.example.kurilichevproject.db.Landmarks
-import com.example.kurilichevproject.db.connectToDB
 import com.example.kurilichevproject.ui.theme.AppTheme
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -75,33 +76,54 @@ fun Favorites(navController: NavHostController) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {}
     }
-    //connectToDB()
     // Карточки
+    val landmarks = remember {
+        transaction {
+            Landmark.find(Landmarks.isFavorite eq true)
+                .toList()
+        }
+    }
     LazyColumn(
         Modifier
             .padding(top = 70.dp, start = 10.dp, end = 10.dp)
     ) {
-        val landmarks = transaction { Landmark.find{ Landmarks.isFavorite eq true} }.toList()
-        items(landmarks.size) { card ->
+        items(landmarks.size) { landmarkId ->
+            val landmark = landmarks[landmarkId]
+            val image = remember {
+                transaction {
+                    landmark.images.toList().first().image
+                }
+            }
             OutlinedCard(
-                modifier = Modifier.padding(10.dp).fillMaxWidth()
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth()
             ) {
                 Row(
-                    Modifier.clickable { navController.navigate("InfoView/${card}") },
+                    Modifier.clickable { navController.navigate("InfoView/${landmark.id.value}") },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    AsyncImage(
-                        model = transaction { LandmarkImage.find(LandmarkImages.landmark eq card).first().id.value },
+                    SubcomposeAsyncImage(
+                        model = image,
+                        loading = {
+                            CircularProgressIndicator()
+                        },
                         contentDescription = "Изображение-превью карточки",
-                        Modifier
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.clip(RoundedCornerShape(10.dp))
                             .size(100.dp)
                             .padding(10.dp)
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(MaterialTheme.colorScheme.primaryContainer)
+                        //.background(MaterialTheme.colorScheme.primaryContainer)
                     )
                     Column(modifier = Modifier.fillMaxSize()) {
-                        Text(text = transaction { Landmark.findById(card)!!.title }, style = MaterialTheme.typography.headlineSmall)
-                        Text(text = transaction { Landmark.findById(card)!!.address }, style = MaterialTheme.typography.labelMedium)
+                        Text(
+                            text = landmark.title,
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                        Text(
+                            text = landmark.address,
+                            style = MaterialTheme.typography.labelMedium
+                        )
                     }
                 }
             }

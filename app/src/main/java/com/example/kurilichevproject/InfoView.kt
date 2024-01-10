@@ -41,6 +41,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
@@ -48,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.kurilichevproject.db.Landmark
 import com.example.kurilichevproject.db.Landmarks
 import com.example.kurilichevproject.ui.theme.AppTheme
@@ -83,7 +86,6 @@ fun InfoView(navController: NavHostController, card: Landmark) {
         })
     }) { innerPadding ->
 
-        //LaunchedEffect( null ) {connectToDB()}
         val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
@@ -109,12 +111,15 @@ fun InfoView(navController: NavHostController, card: Landmark) {
                         .padding(top = 24.dp)
                 ) {
                     AsyncImage(
-                        model = imageUrl,
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(imageUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentScale = ContentScale.FillWidth,
                         contentDescription = "Gallery item",
-                        modifier = Modifier
-                            .size(250.dp)
-                            .align(Alignment.Center)
+                        modifier = Modifier.fillMaxWidth()
                             .clip(RoundedCornerShape(10.dp))
+                            .align(Alignment.Center)
                     )
                 }
             }
@@ -130,14 +135,14 @@ fun InfoView(navController: NavHostController, card: Landmark) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                    modifier = Modifier
                 ) {
-                    var starStatus by remember { mutableStateOf(false) }
+                    var starStatus by remember { mutableStateOf(card.isFavorite) }
                     IconButton(onClick = {
-                        transaction { card.isFavorite = !card.isFavorite }
                         starStatus = !starStatus
+                        transaction { card.isFavorite = starStatus }
                     }) {
-                        if (!card.isFavorite) {
+                        if (!starStatus) {
                             Icon(
                                 imageVector = Icons.TwoTone.Star,
                                 tint = MaterialTheme.colorScheme.primary,
@@ -189,8 +194,8 @@ fun InfoView(navController: NavHostController, card: Landmark) {
                 }
                 Text(
                     text = "Подробное описание",
-                    modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
-                    style = MaterialTheme.typography.headlineSmall
+                    modifier = Modifier.padding(top = 40.dp, bottom = 10.dp),
+                    style = MaterialTheme.typography.titleMedium
                 )
                 Text(
                     text = card.detaileDescription
@@ -206,7 +211,8 @@ fun InfoView(navController: NavHostController, card: Landmark) {
                 var text by remember { mutableStateOf("") }
                 LaunchedEffect(null) {
                     transaction {
-                        text = Landmarks.select { Landmarks.id eq card.id }.single()[Landmarks.comment]
+                        text =
+                            Landmarks.select { Landmarks.id eq card.id }.single()[Landmarks.comment]
                     }
 
                 }
